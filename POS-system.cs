@@ -213,8 +213,49 @@ class POSSystem
             Console.WriteLine($"Quantity: {item.product.quantity}");
             Console.WriteLine($"Subtotal: {subtotal}");
 
-            Console.
+            Console.WriteLine("-----------------------------------");
         }
+        Console.WriteLine($"Total: ${total}");
+    }
+
+    static void CheckOut()
+    {
+        if (cart.Count == 0)
+        {
+            Console.WriteLine("Your cart is empty");
+            return;
+        }
+
+        decimal total = CalculateTotal();
+
+        Console.WriteLine("\n======== CHECK OUT ========");
+        Console.WriteLine($"Total Amount: ${total}");
+
+        Console.Write("Enter your payment: ");
+
+        if(!decimal.TryParse(Console.ReadLine(), out decimal payment))
+        {
+            Console.WriteLine("Invalid Payment!");
+            return;
+        }
+
+        if (payment < total)
+        {
+            Console.WriteLine("Not Enough Payment");
+            return;
+        }
+
+        decimal change = payment - total;
+
+        foreach (CartItem item in cart) 
+        {
+            item.product.stock -= item.quantity;
+        }
+
+        PrintRecipt(Payment, change);
+        cart.Clear();
+
+        Console.WriteLine("Checkout Successful");
     }
 }
     
