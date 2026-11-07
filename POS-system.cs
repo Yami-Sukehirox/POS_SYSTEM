@@ -3,66 +3,74 @@ using System.Collections.Generic;
 
 class POSSystem
 {
-    class product 
+    class Product
     {
         public int productId;
         public string productName;
-        public decimal Price;
+        public decimal price;
         public int stock;
     }
-    class CartItem 
+
+    class CartItem
     {
         public Product product;
         public int quantity;
     }
 
-    static List<Product> product = new List<Product>();
+    static List<Product> products = new List<Product>();
     static List<CartItem> cart = new List<CartItem>();
 
-    static void Main(String[] args) 
+    static void Main(string[] args)
     {
         LoadProducts();
 
         int choice = 0;
 
-        while (choice != 5) 
+        while (choice != 5)
         {
             DisplayMenu();
 
-            Console.WriteLine("Enter your choice: ");
+            Console.Write("Enter your choice: ");
 
             if (!int.TryParse(Console.ReadLine(), out choice))
             {
                 Console.WriteLine("Invalid choice!");
                 continue;
             }
-            switch (choice) 
+
+            switch (choice)
             {
                 case 1:
-                    viewProducts();
+                    ViewProducts();
                     break;
+
                 case 2:
                     AddToCart();
                     break;
+
                 case 3:
-                    Viewcart();
+                    ViewCart();
                     break;
+
                 case 4:
                     CheckOut();
                     break;
+
                 case 5:
                     Console.WriteLine("Thank you for shopping!");
                     break;
+
                 default:
-                    Console.WriteLine("Invalid Choice!");
-                    break;               
+                    Console.WriteLine("Invalid choice!");
+                    break;
             }
         }
     }
 
+  
     static void LoadProducts()
     {
-        Product Hamburger = new Product()
+        Product hamburger = new Product()
         {
             productId = 1,
             productName = "Hamburger",
@@ -70,9 +78,9 @@ class POSSystem
             stock = 100
         };
 
-        product.Add(Hamburger);
+        products.Add(hamburger);
 
-        Product Coke Float = new Product()
+        Product cokeFloat = new Product()
         {
             productId = 2,
             productName = "Coke Float",
@@ -80,19 +88,20 @@ class POSSystem
             stock = 50
         };
 
-        product.Add(Coke Float);
+        products.Add(cokeFloat);
 
-        Product Chicken = new Product()
+        Product chicken = new Product()
         {
             productId = 3,
             productName = "Chicken",
             price = 100,
             stock = 30
         };
-        
-        product.Add(Chicken);
+
+        products.Add(chicken);
     }
 
+  
     static void DisplayMenu()
     {
         Console.WriteLine("\n===== MENU =====");
@@ -103,11 +112,12 @@ class POSSystem
         Console.WriteLine("5. Exit");
     }
 
-    static void viewProducts()
+
+    static void ViewProducts()
     {
         if (products.Count == 0)
         {
-            Console.WriteLine("No Products available!")
+            Console.WriteLine("No products available!");
             return;
         }
 
@@ -118,15 +128,30 @@ class POSSystem
             Console.WriteLine("---------------------");
             Console.WriteLine($"Product ID: {product.productId}");
             Console.WriteLine($"Product Name: {product.productName}");
-            Console.WriteLine($"Price: {product.price}");
+            Console.WriteLine($"Price: ${product.price}");
             Console.WriteLine($"Stock: {product.stock}");
         }
     }
 
+    
+    static Product GetProduct(int productId)
+    {
+        foreach (Product item in products)
+        {
+            if (item.productId == productId)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    
     static void AddToCart()
     {
         Console.Write("Enter Product ID: ");
-        
+
         if (!int.TryParse(Console.ReadLine(), out int productId))
         {
             Console.WriteLine("Invalid Product ID!");
@@ -135,29 +160,23 @@ class POSSystem
 
         Product product = GetProduct(productId);
 
-        if(product == null) 
+        if (product == null)
         {
-            Console.WriteLine("Product not found");
+            Console.WriteLine("Product not found!");
             return;
         }
 
-        Console.WriteLine("Enter Quantity: ");
+        Console.Write("Enter Quantity: ");
 
-        if(!int.TryParse(Console.ReadLine(), out int quantity))
+        if (!int.TryParse(Console.ReadLine(), out int quantity))
         {
             Console.WriteLine("Invalid quantity!");
             return;
         }
 
-        if (quantity < 0) 
+        if (quantity <= 0)
         {
-            Console.WriteLine("Invalid Quantity.");
-            return;
-        }
-
-        if (quantity > product.stock)
-        {
-            Console.WriteLine("Not enough stock.");
+            Console.WriteLine("Invalid quantity!");
             return;
         }
 
@@ -165,39 +184,52 @@ class POSSystem
 
         foreach (CartItem item in cart)
         {
-            if(item.product.productId == productId)
+            if (item.product.productId == productId)
             {
                 existingItem = item;
                 break;
             }
         }
 
+        int currentQuantity = 0;
+
+        if (existingItem != null)
+        {
+            currentQuantity = existingItem.quantity;
+        }
+
+        if (currentQuantity + quantity > product.stock)
+        {
+            Console.WriteLine("Not enough stock!");
+            return;
+        }
+
         if (existingItem != null)
         {
             existingItem.quantity += quantity;
         }
-        else 
+        else
         {
             CartItem newItem = new CartItem()
             {
-                product = quantity,
+                product = product,
                 quantity = quantity
             };
 
             cart.Add(newItem);
         }
-        Console.WriteLine("Product Added to cart successfully!");
+
+        Console.WriteLine("Product added to cart successfully!");
     }
 
-    static void Viewcart()
+   
+    static void ViewCart()
     {
         if (cart.Count == 0)
         {
-            Console.WriteLine("Your cart is empty!")
+            Console.WriteLine("Your cart is empty!");
             return;
         }
-
-        decimal total = 0;
 
         Console.WriteLine("\n========= SHOPPING CART ==========");
 
@@ -205,82 +237,96 @@ class POSSystem
         {
             decimal subtotal = item.product.price * item.quantity;
 
-            total += subtotal;
-
             Console.WriteLine($"Product ID: {item.product.productId}");
             Console.WriteLine($"Product Name: {item.product.productName}");
             Console.WriteLine($"Price: ${item.product.price}");
-            Console.WriteLine($"Quantity: {item.product.quantity}");
-            Console.WriteLine($"Subtotal: {subtotal}");
+            Console.WriteLine($"Quantity: {item.quantity}");
+            Console.WriteLine($"Subtotal: ${subtotal}");
 
             Console.WriteLine("-----------------------------------");
         }
-        Console.WriteLine($"Total: ${total}");
+
+        Console.WriteLine($"Total: ${CalculateTotal()}");
     }
 
+
+    static decimal CalculateTotal()
+    {
+        decimal total = 0;
+
+        foreach (CartItem item in cart)
+        {
+            decimal subtotal = item.product.price * item.quantity;
+
+            total += subtotal;
+        }
+
+        return total;
+    }
+
+    
     static void CheckOut()
     {
         if (cart.Count == 0)
         {
-            Console.WriteLine("Your cart is empty");
+            Console.WriteLine("Your cart is empty!");
             return;
         }
 
         decimal total = CalculateTotal();
 
-        Console.WriteLine("\n======== CHECK OUT ========");
+        Console.WriteLine("\n======== CHECKOUT ========");
         Console.WriteLine($"Total Amount: ${total}");
 
-        Console.Write("Enter your payment: ");
+        Console.Write("Enter your payment: $");
 
-        if(!decimal.TryParse(Console.ReadLine(), out decimal payment))
+        if (!decimal.TryParse(Console.ReadLine(), out decimal payment))
         {
-            Console.WriteLine("Invalid Payment!");
+            Console.WriteLine("Invalid payment!");
             return;
         }
 
         if (payment < total)
         {
-            Console.WriteLine("Not Enough Payment");
+            Console.WriteLine("Not enough payment!");
             return;
         }
 
         decimal change = payment - total;
 
-        foreach (CartItem item in cart) 
+        foreach (CartItem item in cart)
         {
             item.product.stock -= item.quantity;
         }
 
-        PrintRecipt(Payment, change);
+        PrintReceipt(payment, change);
+
         cart.Clear();
 
-        Console.WriteLine("Checkout Successful");
+        Console.WriteLine("Checkout successful!");
     }
 
-    static void PrintRecipt(decimal payment, decimal change)
+    
+    static void PrintReceipt(decimal payment, decimal change)
     {
-        Console.WriteLine("\n========= OFFICIAL RECIPT ==========");
+        Console.WriteLine("\n========= OFFICIAL RECEIPT ==========");
 
-        foreach (CartItem item in cart) 
+        foreach (CartItem item in cart)
         {
             decimal subtotal = item.product.price * item.quantity;
 
             Console.WriteLine(item.product.productName);
             Console.WriteLine($"Price: ${item.product.price}");
-            Console.WriteLine($"Quantity: {item.product.quantity}");
+            Console.WriteLine($"Quantity: {item.quantity}");
             Console.WriteLine($"Subtotal: ${subtotal}");
             Console.WriteLine("---------------------------------------");
         }
 
-        Console.WriteLine($"Total: ${CalculateTotal}");
+        Console.WriteLine($"Total: ${CalculateTotal()}");
         Console.WriteLine($"Payment: ${payment}");
-        Console.WriteLine($"Change: ${change}");
-
+        Console.WriteLine($"Change: %{change}");
 
         Console.WriteLine("=============================================");
-        Console.WriteLine("Thank you for shopping");
+        Console.WriteLine("Thank you for shopping!");
     }
 }
-    
- 
