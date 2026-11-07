@@ -257,6 +257,30 @@ class POSSystem
 
         Console.WriteLine("Checkout Successful");
     }
+
+    static void PrintRecipt(decimal payment, decimal change)
+    {
+        Console.WriteLine("\n========= OFFICIAL RECIPT ==========");
+
+        foreach (CartItem item in cart) 
+        {
+            decimal subtotal = item.product.price * item.quantity;
+
+            Console.WriteLine(item.product.productName);
+            Console.WriteLine($"Price: ${item.product.price}");
+            Console.WriteLine($"Quantity: {item.product.quantity}");
+            Console.WriteLine($"Subtotal: ${subtotal}");
+            Console.WriteLine("---------------------------------------");
+        }
+
+        Console.WriteLine($"Total: ${CalculateTotal}");
+        Console.WriteLine($"Payment: ${payment}");
+        Console.WriteLine($"Change: ${change}");
+
+
+        Console.WriteLine("=============================================");
+        Console.WriteLine("Thank you for shopping");
+    }
 }
     
  
