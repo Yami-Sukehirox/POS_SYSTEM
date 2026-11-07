@@ -26,7 +26,7 @@ class POSSystem
 
         int choice = 0;
 
-        while (choice != 5)
+        while (choice != )
         {
             DisplayMenu();
 
@@ -57,8 +57,11 @@ class POSSystem
                     break;
 
                 case 5:
-                    Console.WriteLine("Thank you for shopping!");
+                    RemoveFromcart();
                     break;
+
+                case 6:
+                    Console.WriteLine("Thank you for shopping!");
 
                 default:
                     Console.WriteLine("Invalid choice!");
@@ -109,7 +112,8 @@ class POSSystem
         Console.WriteLine("2. Add to Cart");
         Console.WriteLine("3. View Cart");
         Console.WriteLine("4. Checkout");
-        Console.WriteLine("5. Exit");
+        Console.WriteLine("5. Remove from the cart");
+        Console.WriteLine("6. Exit");
     }
 
 
